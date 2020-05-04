@@ -35,7 +35,7 @@ public class TweetService {
 
     Map<String, Long> result = this.fetchCache();
 
-    tweetApiResponse.setTweetCount(result);
+    tweetApiResponse.setShopList(getShopList(result));
     stopWatch.stop();
     tweetApiResponse.setLatency(BigDecimal.valueOf(stopWatch.getTotalTimeSeconds()));
     return tweetApiResponse;
@@ -54,5 +54,11 @@ public class TweetService {
     }
 
     return tweetCount;
+  }
+
+  private List<TweetApiResponse.Shop> getShopList(Map<String, Long> tweetCount) {
+    return tweetCount.entrySet().stream()
+        .map(s -> new TweetApiResponse.Shop(s.getKey(), s.getValue()))
+        .collect(Collectors.toList());
   }
 }
