@@ -16,24 +16,22 @@ import java.util.concurrent.TimeUnit;
 @Repository
 @AllArgsConstructor
 @Slf4j
-public class RedisRepositoryImpl implements RedisRepository {
+public class RssRedisRepositoryImpl implements RedisRepository {
 
   private final RssDomainService rssDomainService;
   private final StringRedisTemplate redisTemplate;
 
-  @Override
   public void insertCache(List<Rss> rsses) {
     if (rsses.size() > 0) {
       List<String> jsonList = rssDomainService.getJsonRss(rsses);
-      redisTemplate.delete("paper:json");
-      redisTemplate.opsForList().rightPushAll("paper:json", jsonList);
-      redisTemplate.expire("paper:json", 600, TimeUnit.SECONDS);
+      redisTemplate.delete(RSS_KEY);
+      redisTemplate.opsForList().rightPushAll(RSS_KEY, jsonList);
+      redisTemplate.expire(RSS_KEY, 600, TimeUnit.SECONDS);
     }
   }
 
-  @Override
   public List<Rss> getCache() {
-    List<String> jsonList = redisTemplate.opsForList().range("paper:json", 0, -1);
+    List<String> jsonList = redisTemplate.opsForList().range(RSS_KEY, 0, -1);
 
     if (StringUtils.isEmpty(jsonList)) {
       return new ArrayList<>();

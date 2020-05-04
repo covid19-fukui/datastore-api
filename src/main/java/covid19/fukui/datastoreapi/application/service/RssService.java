@@ -1,9 +1,9 @@
 package covid19.fukui.datastoreapi.application.service;
 
 import covid19.fukui.datastoreapi.domain.model.Rss;
-import covid19.fukui.datastoreapi.domain.repository.RssRepository;
-import covid19.fukui.datastoreapi.infrastructure.repository.RedisRepositoryImpl;
-import covid19.fukui.datastoreapi.presentation.dto.response.ApiResponse;
+import covid19.fukui.datastoreapi.domain.repository.RssDataStoreRepository;
+import covid19.fukui.datastoreapi.infrastructure.repository.RssRedisRepositoryImpl;
+import covid19.fukui.datastoreapi.presentation.dto.response.RssApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,27 +18,28 @@ import java.util.List;
 @Slf4j
 public class RssService {
 
-  private final RssRepository rssRepository;
-  private final RedisRepositoryImpl redisRepository;
+  private final RssDataStoreRepository rssDataStoreRepository;
+  private final RssRedisRepositoryImpl redisRepository;
+  private static final int NUM_PAPER = 20;
 
-  public ApiResponse getRssInfo() {
+  public RssApiResponse getRssInfo() {
     final StopWatch stopWatch = new StopWatch();
     stopWatch.start();
-    ApiResponse apiResponse = new ApiResponse();
-    apiResponse.setRequestDate(LocalDateTime.now());
+    RssApiResponse rssApiResponse = new RssApiResponse();
+    rssApiResponse.setRequestDate(LocalDateTime.now());
 
     List<Rss> result = this.fetchCache();
 
-    apiResponse.setRssList(result);
+    rssApiResponse.setRssList(result);
     stopWatch.stop();
-    apiResponse.setLatency(BigDecimal.valueOf(stopWatch.getTotalTimeSeconds()));
-    return apiResponse;
+    rssApiResponse.setLatency(BigDecimal.valueOf(stopWatch.getTotalTimeSeconds()));
+    return rssApiResponse;
   }
 
   private List<Rss> fetchCache() {
     List<Rss> rsses = redisRepository.getCache();
     if (rsses.size() == 0) {
-      rsses = rssRepository.findRecencyTop();
+      rsses = rssDataStoreRepository.findRecencyTop(NUM_PAPER);
       redisRepository.insertCache(rsses);
     }
     return rsses;

@@ -1,7 +1,7 @@
 package covid19.fukui.datastoreapi.presentation.controller;
 
-import covid19.fukui.datastoreapi.application.service.RssService;
-import covid19.fukui.datastoreapi.presentation.dto.response.RssApiResponse;
+import covid19.fukui.datastoreapi.application.service.TweetService;
+import covid19.fukui.datastoreapi.presentation.dto.response.TweetApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @Slf4j
-public class RssController {
+public class TweetController {
 
-  private final RssService rssService;
+  private final TweetService tweetService;
 
-  @GetMapping(path = "rss/fukuishimbun")
-  public RssApiResponse getRssInfo() {
-    return rssService.getRssInfo();
+  @GetMapping(path = "tweetCount")
+  public TweetApiResponse getTweetCount() {
+    return tweetService.getTweet();
   }
 }
