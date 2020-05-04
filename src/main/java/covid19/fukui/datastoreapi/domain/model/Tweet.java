@@ -13,6 +13,7 @@ import org.springframework.cloud.gcp.data.datastore.core.mapping.Field;
 public class Tweet {
   @Field(name = "tweet_id")
   Long tweetId;
+
   String shop;
 
   @Field(name = "published_at")

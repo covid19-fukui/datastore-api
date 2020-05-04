@@ -18,9 +18,9 @@ import java.util.List;
 @Slf4j
 public class RssService {
 
+  private static final int NUM_PAPER = 20;
   private final RssDataStoreRepository rssDataStoreRepository;
   private final RssRedisRepositoryImpl redisRepository;
-  private static final int NUM_PAPER = 20;
 
   public RssApiResponse getRssInfo() {
     final StopWatch stopWatch = new StopWatch();

@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TweetService {
 
+  private static final int NUM_SHOP = 20;
+  private static final int NUM_TWEET = 200;
   private final TweetDataStoreRepository dataStoreRepository;
   private final TweetRedisRepositoryImpl redisRepository;
   private final TweetDomainService tweetDomainService;
-  private static final int NUM_SHOP = 20;
-  private static final int NUM_TWEET = 200;
 
   public TweetApiResponse getTweet() {
     final StopWatch stopWatch = new StopWatch();
