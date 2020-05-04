@@ -1,0 +1,16 @@
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  cloud:
+    gcp:
+      datastore:
+        project-id: ${DATASTORE_PROJECT_ID}
+        credentials:
+          encoded-key: ${DATASTORE_CREDENTIALS}
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+    database: 0

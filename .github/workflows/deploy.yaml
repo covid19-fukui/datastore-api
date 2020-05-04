@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.16.0]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build with Maven
+        run: ./mvnw clean package appengine:stage -DskipTests=true
+
+      - name: GAE deploy
+        run: |
+          cd ./target/appengine-staging
+          echo $GCLOUD_SERVICE_KEY | base64 -d > ./gcloud-service-key.json
+          echo $SECRET_KEY | base64 -d > ./secret.yaml
+          echo 'github-actions@covid19-backend-276205.iam.gserviceaccount.com' | gcloud auth activate-service-account --key-file ./gcloud-service-key.json
+          gcloud app deploy ./app.yaml --quiet --project covid19-backend-276205
+        env:
+          CI: true
