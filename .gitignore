@@ -32,3 +32,4 @@ build/
 
 ### ENV ###
 .env
+secret.yaml
