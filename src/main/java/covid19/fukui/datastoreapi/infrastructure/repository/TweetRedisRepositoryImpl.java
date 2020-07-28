@@ -7,7 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -28,6 +31,11 @@ public class TweetRedisRepositoryImpl implements RedisRepository {
   }
 
   public Map<String, Long> getCache() {
+    Optional<Long> ttl = Optional.ofNullable(redisTemplate.getExpire(TWEET_KEY));
+    if (ttl.orElse(0L) < 10L) {
+      return new HashMap<>();
+    }
+
     return domainService.convertTweetCount(
         redisTemplate.<String, String>opsForHash().entries(TWEET_KEY));
   }
