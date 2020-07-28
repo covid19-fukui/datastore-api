@@ -7,10 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -31,6 +34,11 @@ public class RssRedisRepositoryImpl implements RedisRepository {
   }
 
   public List<Rss> getCache() {
+    Optional<Long> ttl = Optional.ofNullable(redisTemplate.getExpire(RSS_KEY));
+    if (ttl.orElse(0L) < 10L) {
+      return new ArrayList<>();
+    }
+
     List<String> jsonList = redisTemplate.opsForList().range(RSS_KEY, 0, -1);
 
     if (StringUtils.isEmpty(jsonList)) {
